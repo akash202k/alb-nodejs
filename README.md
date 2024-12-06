@@ -55,6 +55,6 @@ This is a simple Node.js project used to demonstrate load balancing. It returns 
 - Traffic is routed securely using an SSL certificate and a custom domain.
 - The application is accessible over HTTPS, and all functionalities work as expected.
 
-### Architecture Diagram
+### 🚀 Architecture Diagram 🚀
 
 ![alt text](image.png)
