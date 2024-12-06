@@ -1,43 +1,56 @@
-# alb-nodejs
-This is simple nodejs project used to demonstrate load balancing. it return server public and private ip on which this project hosted .
+# ALB-NodeJS Project
 
+This is a simple Node.js project used to demonstrate load balancing. It returns the public and private IP addresses of the server hosting the application.
 
-## Assignment
+---
 
-# Level : 1
+## **Assignment Overview**
 
-> Create two Ec2 with type t2.micro, install required packages like nodejs using nvm , install pm2 to run nodeJs application in background.
-> Create target group and register target group with ec2 instance
-> Create load balancer and attach it to ec2 instance
-> Create security group and allow inbound traffic on port application port
+### **Level 1: Basic Setup**
+1. Launch **two EC2 instances** of type `t2.micro`.
+2. Install required packages:
+   - Install **Node.js** using `nvm`.
+   - Install **PM2** to run the Node.js application in the background.
+3. Create a **Target Group** and register the EC2 instances with it.
+4. Set up a **Load Balancer** and attach it to the Target Group.
+5. Configure a **Security Group**:
+   - Allow inbound traffic on the application's port.
 
-# Level : 2
+---
 
-> create image from one of ec2 instance in which above application is running 
-> create launch template with above  created image in above step
-> create auto scalling group with above launch template and target group( with target group created in Level : 1 )
-> now delete older vm and check auto scallign will launch new ec2 . 
+### **Level 2: Auto Scaling**
+1. Create an **AMI** (Amazon Machine Image) from one of the EC2 instances running the application.
+2. Create a **Launch Template** using the AMI created in the previous step.
+3. Configure an **Auto Scaling Group**:
+   - Use the Launch Template.
+   - Attach it to the Target Group created in Level 1.
+4. Test Auto Scaling:
+   - Delete the original EC2 instances.
+   - Verify that the Auto Scaling Group automatically launches new instances.
 
+---
 
-# Level : 3
+### **Level 3: Domain and HTTPS**
+1. Route traffic to the Load Balancer using **Route 53**.
+2. Generate an **SSL certificate** using AWS ACM (AWS Certificate Manager).
+3. Configure the Load Balancer to:
+   - Redirect traffic from HTTP to HTTPS.
+   - Serve the application securely using the SSL certificate.
 
-> route traffic to load balancer using route53
-> create ssl certificate with aws acm service 
-> route traffic from http to https
+---
 
+## **Expected Outcomes**
 
-# Outcomes
+### **Level 1: Basic Setup**
+- The application is accessible via the public DNS of the Load Balancer.
+- Load balancing is functioning correctly.
 
-# Level : 1
-> Able to access application on public ip of load balancer dns.
-> load balancing working properly
+### **Level 2: Auto Scaling**
+- Successfully created an Auto Scaling Group with the Launch Template and Target Group.
+- Auto Scaling works as expected:
+  - Automatically scales in and out based on the load.
+  - Load Balancer maintains proper functionality with scaled instances.
 
-# Level : 2
-
-> Able to create auto scaling group with launch template and target group
-> Auto-scaling working properly along with load balancers & able to scale-in and scale-out instances .
-
-# Level : 3
-
-> Able to route traffic from http to https using ssl certificate
-> Able to access application with custom domain over https and everything is working properly.
+### **Level 3: Domain and HTTPS**
+- Traffic is routed securely using an SSL certificate and a custom domain.
+- The application is accessible over HTTPS, and all functionalities work as expected.
