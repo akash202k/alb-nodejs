@@ -3,7 +3,7 @@ import os from 'os';
 import axios from "axios"
 
 const app = express();
-const PORT = process.env.PORT || "80"
+const PORT = process.env.PORT || "8080"
 
 // Function to get the server's IP address
 const getServerPrivateIp = () => {
