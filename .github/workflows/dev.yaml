@@ -55,7 +55,7 @@ jobs:
       #   with:
       #     token: ${{ secrets.PAT_TOKEN }}
       #     path: .
-      #     repository: your-org/your-k8s-manifests-repo
+      #     repository: akash202k/argocd-app-config
       #     branch: update-image-${{ github.sha }}
       #     title: "Update image tag to ${{ github.sha }}"
       #     body: "Updates the application image to the tag ${{ github.sha }}"
