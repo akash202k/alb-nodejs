@@ -28,6 +28,7 @@ app.get('/', async (req, res) => {
     const privateIp = getServerPrivateIp();
     const publicIp = await serverPublicIp();
     const data = {
+        "ping": "Pong"
         "public ip": publicIp,
         "private ip": privateIp,
     }
