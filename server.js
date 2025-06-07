@@ -24,7 +24,7 @@ const serverPublicIp = async () => {
     return publicIp;
 }
 // Define the root route
-app.get('/', async (req, res) => {
+app.get('/demo-app', async (req, res) => {
     const privateIp = getServerPrivateIp();
     const publicIp = await serverPublicIp();
     const data = {
