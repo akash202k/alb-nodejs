@@ -1,70 +1,37 @@
-name: Build and Push to ECR
+name: Build and Push karpenter to ECR
 
 on:
   push:
-    branches: [ main ]  # Trigger only on main branch pushes
+    branches: [main]
+
+env:
+  IMAGE_NAME: karpenter
+  IMAGE_TAG: v1.0.0
 
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
+      - name: Checkout repo
         uses: actions/checkout@v4
 
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@v2
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
-      - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v2
-
-      - name: Set image tag dynamically
-        id: vars
+      - name: Log in to Amazon ECR
         run: |
-          echo "SHORT_SHA=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+          aws ecr-public get-login-password --region ${{ secrets.AWS_REGION }} \
+          | docker login --username AWS --password-stdin ${{ secrets.ECR_URI }}
 
-      - name: Build, tag, and push image to ECR
-        env:
-          ECR_REGISTRY: ${{ secrets.ECR_REGISTRY }}
-          ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
+      - name: Build Docker image
         run: |
-          IMAGE_URI=$ECR_REGISTRY/$ECR_REPOSITORY:$SHORT_SHA
-          LATEST_URI=$ECR_REGISTRY/$ECR_REPOSITORY:latest
+          docker build -t $IMAGE_NAME .
 
-          echo "Building Docker image with tag: $SHORT_SHA"
-          docker build -t $IMAGE_URI .
-
-          echo "Tagging image as latest"
-          docker tag $IMAGE_URI $LATEST_URI
-
-          echo "Pushing image: $IMAGE_URI"
-          docker push $IMAGE_URI
-
-          echo "Pushing image: $LATEST_URI"
-          docker push $LATEST_URI
-
-
-      # - name: Update Kubernetes manifests
-      #   if: github.ref == 'refs/heads/main'
-      #   uses: peter-evans/create-pull-request@v5
-      #   with:
-      #     token: ${{ secrets.PAT_TOKEN }}
-      #     path: .
-      #     repository: akash202k/argocd-app-config
-      #     branch: update-image-${{ github.sha }}
-      #     title: "Update image tag to ${{ github.sha }}"
-      #     body: "Updates the application image to the tag ${{ github.sha }}"
-      #     commit-message: "chore: update image tag to ${{ github.sha }}"
-      #     labels: automerge
-      #     base: main
-      #     add-paths: |
-      #       path/to/your/deployment.yaml
-      #     committer: GitHub Actions <actions@github.com>
-      #     author: GitHub Actions <actions@github.com>
-      #     reviewers: yourname
-      #     signoff: true
+      - name: Tag and push image
+        run: |
+          docker tag $IMAGE_NAME ${{ secrets.ECR_URI }}:$IMAGE_TAG
+          docker push ${{ secrets.ECR_URI }}:$IMAGE_TAG
